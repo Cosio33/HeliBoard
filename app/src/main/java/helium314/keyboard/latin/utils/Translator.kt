@@ -4,6 +4,7 @@ package helium314.keyboard.latin.utils
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import helium314.keyboard.latin.R
 import helium314.keyboard.latin.RichInputConnection
 
 /**
