@@ -193,4 +193,8 @@ object Defaults {
     const val PREF_SAVE_SUBTYPE_PER_APP = false
     const val PREF_SPELLCHECK_SUGGEST = true
     const val PREF_SHOW_ONLY_TOOLBAR_WITH_HARDWARE_KEYBOARD = false
+    const val PREF_TRANSLATE_ENABLED = true
+    const val PREF_TRANSLATE_ENDPOINT = "https://libretranslate.de"
+    const val PREF_TRANSLATE_SOURCE = "auto"
+    const val PREF_TRANSLATE_TARGET = "es"
 }

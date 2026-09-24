@@ -1311,5 +1311,24 @@ New dictionary:
      string will probably be removed once data gathering is finished (end of 2026 latest) -->
     <string name="gesture_data_swipe_o_scope">Tool for visualizing gesture data: &lt;a href=%s&gt;Swipe-O-Scope&lt;/a&gt;</string>
 
+    <!-- Integrated translator feature -->
+    <string name="translate_title">Traductor</string>
+    <string name="translate_enable">Traductor integrado</string>
+    <string name="translate_enable_summary">Traduce el texto que escribes usando un servicio de traducción en línea (compatible con LibreTranslate).</string>
+    <string name="translate_endpoint">Servidor de traducción (URL)</string>
+    <string name="translate_endpoint_summary">Endpoint compatible con LibreTranslate, p. ej. https://libretranslate.de (no incluyas /translate).</string>
+    <string name="translate_source">Idioma origen</string>
+    <string name="translate_target">Idioma destino</string>
+    <string name="translate_swap">Intercambiar idiomas</string>
+    <string name="translate_insert">Insertar traducción</string>
+    <string name="translate_close">Cerrar traductor</string>
+    <string name="translate_settings">Ajustes del servidor</string>
+    <string name="translate_result_placeholder">La traducción aparecerá aquí…</string>
+    <string name="translate_endpoint_dialog_title">URL del servidor de traducción</string>
+    <string name="translate_endpoint_dialog_msg">Introduce la URL base del servidor (compatible con LibreTranslate). No incluyas /translate al final.</string>
+    <string name="translate_auto">Detectar</string>
+    <string name="translate_error">Error: %s</string>
+    <string name="translate_empty">Escribe algo para traducir</string>
+
     <!-- new strings should go above the section for gesture data gathering -->
 </resources>

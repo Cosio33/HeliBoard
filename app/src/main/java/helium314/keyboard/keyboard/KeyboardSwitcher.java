@@ -61,6 +61,8 @@ import helium314.keyboard.latin.utils.ResourceUtils;
 import helium314.keyboard.latin.utils.ScriptUtils;
 import helium314.keyboard.latin.utils.SubtypeUtilsAdditional;
 import helium314.keyboard.latin.utils.ToolbarMode;
+import helium314.keyboard.latin.utils.TranslateBar;
+import helium314.keyboard.latin.utils.TranslateController;
 
 public final class KeyboardSwitcher {
     private static final String TAG = KeyboardSwitcher.class.getSimpleName();
@@ -78,6 +80,7 @@ public final class KeyboardSwitcher {
     private ClipboardHistoryView mClipboardHistoryView;
     private TextView mFakeToastView;
     private ImageView mBackgroundGatheringIndicator;
+    private TranslateBar mTranslateBar;
     private LatinIME mLatinIME;
     private RichInputMethodManager mRichImm;
     private boolean mIsHardwareAcceleratedDrawingEnabled;
@@ -572,6 +575,13 @@ public final class KeyboardSwitcher {
         mSuggestionStripView = mCurrentInputView.findViewById(R.id.suggestion_strip_view);
         mStripContainer = mCurrentInputView.findViewById(R.id.strip_container);
         mBackgroundGatheringIndicator = mCurrentInputView.findViewById(R.id.backgroundGatheringIndicator);
+
+        // Integrated translator bar: add it on top of the suggestion strip and toggle its visibility
+        // when translate mode is activated from the toolbar.
+        mTranslateBar = new TranslateBar(mThemeContext, () -> mLatinIME.getCurrentInputConnection());
+        mStripContainer.addView(mTranslateBar);
+        TranslateController.INSTANCE.setBar(mTranslateBar);
+        mTranslateBar.setVisibility(TranslateController.INSTANCE.isActive() ? View.VISIBLE : View.GONE);
 
         prefs.registerOnSharedPreferenceChangeListener(mSuggestionStripView);
         prefs.registerOnSharedPreferenceChangeListener(mClipboardHistoryView);

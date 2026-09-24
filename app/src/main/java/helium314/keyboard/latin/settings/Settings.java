@@ -198,6 +198,12 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
     public static final String PREF_SPELLCHECK_SUGGEST = "spellcheck_suggest";
     public static final String PREF_SHOW_ONLY_TOOLBAR_WITH_HARDWARE_KEYBOARD = "only_toolbar_with_hw_keyboard";
 
+    // Integrated translator (LibreTranslate-compatible API)
+    public static final String PREF_TRANSLATE_ENABLED = "translate_enabled";
+    public static final String PREF_TRANSLATE_ENDPOINT = "translate_endpoint";
+    public static final String PREF_TRANSLATE_SOURCE = "translate_source";
+    public static final String PREF_TRANSLATE_TARGET = "translate_target";
+
     // Emoji
     public static final String PREF_EMOJI_MAX_SDK = "emoji_max_sdk";
     public static final String PREF_RECENT_EMOJIS = "recent_emojis";
