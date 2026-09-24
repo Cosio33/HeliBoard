@@ -30,9 +30,12 @@ object Translator {
             putExtra(Intent.EXTRA_PROCESS_TEXT, text)
             // readonly: we only want to view/translate, not let the app write back into the field
             putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         val chooser = Intent.createChooser(intent, context.getString(R.string.translate))
+        // The chooser is the intent we actually start. Launching an Activity from the IME service
+        // context requires FLAG_ACTIVITY_NEW_TASK on this (chooser) intent, otherwise Android throws
+        // an uncaught AndroidRuntimeException and the keyboard service crashes.
+        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {
             context.startActivity(chooser)
         } catch (_: ActivityNotFoundException) {
