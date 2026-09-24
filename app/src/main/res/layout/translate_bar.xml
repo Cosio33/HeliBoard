@@ -26,7 +26,7 @@
         android:id="@+id/btn_swap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_swap"
         android:contentDescription="@string/translate_swap" />
@@ -56,7 +56,7 @@
         android:id="@+id/btn_insert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_check"
         android:contentDescription="@string/translate_insert" />
@@ -65,7 +65,7 @@
         android:id="@+id/btn_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_settings_gear"
         android:contentDescription="@string/translate_settings" />
@@ -74,7 +74,7 @@
         android:id="@+id/btn_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_close"
         android:contentDescription="@string/translate_close" />

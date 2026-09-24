@@ -19,7 +19,7 @@ import android.widget.TextView
 import helium314.keyboard.latin.R
 import helium314.keyboard.latin.settings.Defaults
 import helium314.keyboard.latin.settings.Settings
-import helium314.keyboard.latin.utils.KtxKt
+import helium314.keyboard.latin.utils.prefs
 
 /**
  * Integrated translator bar shown above the keyboard while translate mode is active.
@@ -36,7 +36,7 @@ class TranslateBar(
         const val MAX_SOURCE_CHARS = 4000
     }
 
-    private val prefs = KtxKt.prefs(context)
+    private val prefs = context.prefs()
     private val spinnerSource: Spinner
     private val spinnerTarget: Spinner
     private val textResult: TextView

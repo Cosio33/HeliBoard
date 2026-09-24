@@ -8,7 +8,7 @@ import android.widget.Toast
 import helium314.keyboard.latin.R
 import helium314.keyboard.latin.settings.Defaults
 import helium314.keyboard.latin.settings.Settings
-import helium314.keyboard.latin.utils.KtxKt
+import helium314.keyboard.latin.utils.prefs
 
 /**
  * Central state holder for the integrated translator.
@@ -27,7 +27,7 @@ object TranslateController {
 
     /** Toggle translate mode. Returns the new active state. */
     fun toggle(context: Context): Boolean {
-        val enabled = KtxKt.prefs(context).getBoolean(Settings.PREF_TRANSLATE_ENABLED, Defaults.PREF_TRANSLATE_ENABLED)
+        val enabled = context.prefs().getBoolean(Settings.PREF_TRANSLATE_ENABLED, Defaults.PREF_TRANSLATE_ENABLED)
         if (!enabled) {
             Toast.makeText(context, R.string.translate_enable, Toast.LENGTH_SHORT).show()
             return false
