@@ -581,7 +581,7 @@ public final class KeyboardSwitcher {
         mTranslateBar = new TranslateBar(mThemeContext, () -> mLatinIME.getCurrentInputConnection());
         mStripContainer.addView(mTranslateBar);
         TranslateController.INSTANCE.setBar(mTranslateBar);
-        mTranslateBar.setVisibility(TranslateController.INSTANCE.isActive() ? View.VISIBLE : View.GONE);
+        mTranslateBar.setVisibility(TranslateController.INSTANCE.getActive() ? View.VISIBLE : View.GONE);
 
         prefs.registerOnSharedPreferenceChangeListener(mSuggestionStripView);
         prefs.registerOnSharedPreferenceChangeListener(mClipboardHistoryView);
