@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.InputType
 import android.view.LayoutInflater
+import android.view.WindowManager
 import android.view.inputmethod.InputConnection
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -196,7 +197,7 @@ class TranslateBar(
             setText(currentEndpoint)
             setSelection(currentEndpoint.length)
         }
-        AlertDialog.Builder(context)
+        val dialog = AlertDialog.Builder(context)
             .setTitle(R.string.translate_endpoint_dialog_title)
             .setMessage(R.string.translate_endpoint_dialog_msg)
             .setView(edit)
@@ -209,6 +210,18 @@ class TranslateBar(
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .create()
+
+        // An InputMethodService is not an Activity, so a plain AlertDialog has no valid
+        // window token and crashes with BadTokenException. Attach it to the IME window
+        // token using the attached-dialog window type, and add FLAG_ALT_FOCUSABLE_IM so the
+        // dialog doesn't steal focus from the keyboard. Mirrors InputMethodPicker.kt.
+        val window = dialog.window
+        val layoutParams = window?.attributes
+        layoutParams?.token = windowToken
+        layoutParams?.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG
+        window?.attributes = layoutParams
+        window?.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        dialog.show()
     }
 }
