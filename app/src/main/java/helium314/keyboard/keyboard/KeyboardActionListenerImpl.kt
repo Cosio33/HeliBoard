@@ -31,6 +31,7 @@ import helium314.keyboard.latin.utils.GestureDataGatheringSettings
 import helium314.keyboard.latin.utils.RecapitalizeMode
 import helium314.keyboard.latin.utils.SubtypeSettings
 import helium314.keyboard.latin.utils.prefs
+import helium314.keyboard.latin.utils.TranslateController
 import kotlin.math.abs
 
 class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inputLogic: InputLogic) : KeyboardActionListener {
@@ -129,6 +130,11 @@ class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inp
                 GestureDataGatheringSettings.tempDisableBackgroundGathering(latinIME.prefs())
                 BackgroundGatheringCache.clear()
                 latinIME.setGestureDataGatheringMode(latinIME.currentInputEditorInfo, false)
+                return
+            }
+            KeyCode.TRANSLATE -> {
+                val active = TranslateController.toggle(latinIME)
+                if (active) TranslateController.onTextChanged(latinIME.getCurrentInputConnection())
                 return
             }
         }

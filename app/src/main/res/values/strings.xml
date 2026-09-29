@@ -352,6 +352,7 @@
     <string name="clipboard" tools:keep="@string/clipboard">Clipboard</string>
     <string name="clear_clipboard" tools:keep="@string/clear_clipboard">Clear clipboard</string>
     <string name="voice" tools:keep="@string/voice">Voice input</string>
+    <string name="translate" tools:keep="@string/translate">Translate</string>
     <string name="numpad" tools:keep="@string/numpad" translatable="false">@string/layout_numpad</string>
     <string name="dpad" tools:keep="@string/dpad" translatable="false">@string/layout_dpad</string>
     <string name="settings" tools:keep="@string/settings">Settings</string>
@@ -1309,6 +1310,32 @@ New dictionary:
     <!-- Link text for gesture data visualization tool (parsed as HTML)
      string will probably be removed once data gathering is finished (end of 2026 latest) -->
     <string name="gesture_data_swipe_o_scope">Tool for visualizing gesture data: &lt;a href=%s&gt;Swipe-O-Scope&lt;/a&gt;</string>
+
+    <!-- Integrated translator feature -->
+    <string name="translate_title">Traductor</string>
+    <string name="translate_enable">Traductor integrado</string>
+    <string name="translate_enable_summary">Traduce el texto que escribes usando un servicio de traducción en línea (compatible con LibreTranslate).</string>
+    <string name="translate_endpoint">Servidor de traducción (URL)</string>
+    <string name="translate_endpoint_summary">Endpoint compatible con LibreTranslate, p. ej. https://libretranslate.de (no incluyas /translate).</string>
+    <string name="translate_source">Idioma origen</string>
+    <string name="translate_origin_label">Origen: %s</string>
+    <string name="translate_target_label">Destino: %s</string>
+    <string name="translate_target">Idioma destino</string>
+    <string name="translate_swap">Intercambiar idiomas</string>
+    <string name="translate_insert">Insertar traducción</string>
+    <string name="translate_close">Cerrar traductor</string>
+    <string name="translate_settings">Ajustes del servidor</string>
+    <string name="translate_result_placeholder">La traducción aparecerá aquí…</string>
+    <string name="translate_endpoint_dialog_title">URL del servidor de traducción</string>
+    <string name="translate_endpoint_dialog_msg">Introduce la URL base del servidor (compatible con LibreTranslate). No incluyas /translate al final.</string>
+    <string name="translate_endpoint_hint">https://translate.disroot.org</string>
+    <string name="translate_api_key">Clave API (opcional)</string>
+    <string name="translate_api_key_summary">Solo para servidores que la requieran, p. ej. libretranslate.com. Déjala vacía si tu servidor no la pide.</string>
+    <string name="translate_api_key_hint">Clave API (opcional)</string>
+    <string name="translate_api_key_dialog_msg">Introduce tu clave API si el servidor la requiere (p. ej. libretranslate.com). Déjala vacía para servidores sin clave como translate.disroot.org.</string>
+    <string name="translate_auto">Detectar</string>
+    <string name="translate_error">Error: %s</string>
+    <string name="translate_empty">Escribe algo para traducir</string>
 
     <!-- new strings should go above the section for gesture data gathering -->
 </resources>
