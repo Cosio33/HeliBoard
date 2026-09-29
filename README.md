@@ -1,4 +1,4 @@
-# HeliBoard
+# HeliBoard Cosio Fork
 HeliBoard is a privacy-conscious and customizable open-source keyboard, based on AOSP / OpenBoard.
 Does not use internet permission, and thus is 100% offline.
 
@@ -86,7 +86,7 @@ En <i>Ajustes → Traductor</i> (o el botón ⚙️ de la barra):
 
 ## Limitaciones conocidas (probado en Android 14)
 
-> ⚠️ Estas limitaciones están presentes en la versión actual de la rama `feature/translator`:
+> ⚠️ Estas limitaciones están presentes en la versión actual del apk `HeliBoard_4.1-translator-release.apk`:
 
 - <b>Selección de idiomas obligatoria pero poco visible</b>: en un equipo con Android 14 **no se logra
   visualizar claramente los idiomas de origen y destino** seleccionados en la barra. Sin embargo,
