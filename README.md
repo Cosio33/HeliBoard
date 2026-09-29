@@ -9,6 +9,7 @@ Does not use internet permission, and thus is 100% offline.
 ## Table of Contents
 
 - [Features](#features)
+- [Traductor integrado (experimental)](#traductor-integrado-experimental)
 - [Contributing](#contributing-)
    * [Reporting Issues](#reporting-issues)
    * [Translations](#translations)
@@ -46,7 +47,61 @@ Does not use internet permission, and thus is 100% offline.
   <li>Split keyboard</li>
   <li>Number pad</li>
   <li>Backup and restore your settings and learned word / history data</li>
+  <li><b>Traductor integrado</b> (experimental, rama <code>feature/translator</code>) — traduce lo que escribes sin salir del teclado, estilo Gboard, usando cualquier servidor compatible con LibreTranslate</li>
 </ul>
+
+# Traductor integrado (experimental)
+
+Integración estilo Gboard que traduce el texto antes del cursor mientras escribes, usando un
+servidor de traducción en línea compatible con <a href="https://libretranslate.com">LibreTranslate</a>.
+
+## Cómo usarlo
+
+1. Toca la tecla del traductor en la toolbar del teclado (globo 🌐). Si está deshabilitada, actívala en
+   <i>Ajustes → Traductor → Traductor integrado</i>.
+2. Escribe texto: la traducción aparece en la barra sobre el teclado.
+3. Toca la traducción (o la paloma ✓) para reemplazar tu texto original por la traducción.
+4. Botones de la barra:
+   - <b>Selector de idioma origen</b> — con soporte de "Detectar" (auto-detección)
+   - <b>⇄</b> — intercambia idiomas origen/destino
+   - <b>Selector de idioma destino</b>
+   - <b>✓ (paloma)</b> — inserta la traducción reemplazando el texto original
+   - <b>⚙️</b> — configurar servidor y API key
+   - <b>✕</b> — cerrar el traductor
+
+## Configuración
+
+En <i>Ajustes → Traductor</i> (o el botón ⚙️ de la barra):
+
+- <b>Servidor (URL)</b>: endpoint compatible con LibreTranslate. Por defecto `https://translate.disroot.org`
+  (gratuito, sin API key, verificado). También puedes apuntar a un servidor local, p. ej.
+  `http://192.168.x.x:5000` (la app permite HTTP sin cifrado justo para esto).
+  ```bash
+  # Ejemplo: servidor local con Docker
+  docker run -ti --rm -p 5000:5000 libretranslate/libretranslate --host 0.0.0.0
+  ```
+- <b>Clave API (opcional)</b>: solo para servidores que la requieran (p. ej. `libretranslate.com`).
+  Déjala vacía para servidores gratuitos.
+- <b>Idioma origen / destino</b>: se pueden cambiar también en vivo desde la propia barra.
+
+## Limitaciones conocidas (probado en Android 14)
+
+> ⚠️ Estas limitaciones están presentes en la versión actual de la rama `feature/translator`:
+
+- <b>Selección de idiomas obligatoria pero poco visible</b>: en un equipo con Android 14 **no se logra
+  visualizar claramente los idiomas de origen y destino** seleccionados en la barra. Sin embargo,
+  **sí hay que seleccionarlos para que la traducción funcione de forma correcta** — si nunca
+  seleccionas origen/destino, la traducción puede salir vacía o en un idioma inesperado. Se puede
+  verificar el par activo en <i>Ajustes → Traductor → Idioma origen / Idioma destino</i>.
+- <b>Visibilidad de iconos parcialmente corregida</b>: el problema de validación/color de iconos
+  (iconos invisibles según el tema) quedó corregido usando el mismo mecanismo de color del tema que
+  la toolbar nativa (`ColorType.TOOL_BAR_KEY`), pero **la visualización de las etiquetas de idioma
+  origen y destino en la barra sigue sin resolverse por completo** en Android 14.
+- <b>Se recomienda copiar y pegar el texto</b>: para que la traducción se detecte de forma rápida,
+  es mejor pegar el texto ya escrito de una vez. Si escribes mientras el traductor está activo, la
+  traducción palabra por palabra puede producir <b>errores de salida</b> (traducciones parciales o
+  erróneas), porque cada cambio dispara una nueva petición al servidor.
+- <b>Requiere conexión a internet</b>: el traductor usa un servicio en línea; no funciona sin red.
 
 For [FAQ](https://github.com/HeliBorg/HeliBoard/wiki/FAQ), [hidden features](https://github.com/HeliBorg/HeliBoard/wiki/9.-Hidden-features) and more information about the app and features, please visit the [wiki](https://github.com/HeliBorg/HeliBoard/wiki)
 

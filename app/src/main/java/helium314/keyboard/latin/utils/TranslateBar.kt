@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.InputType
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputConnection
 import android.widget.AdapterView
@@ -18,6 +19,8 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import helium314.keyboard.latin.R
+import helium314.keyboard.latin.common.ColorType
+import helium314.keyboard.latin.common.Colors
 import helium314.keyboard.latin.settings.Defaults
 import helium314.keyboard.latin.settings.Settings
 import helium314.keyboard.latin.utils.prefs
@@ -47,8 +50,11 @@ class TranslateBar(
     private var currentSource: String = Defaults.PREF_TRANSLATE_SOURCE
     private var currentTarget: String = Defaults.PREF_TRANSLATE_TARGET
     private var currentEndpoint: String = Defaults.PREF_TRANSLATE_ENDPOINT
+    private var currentApiKey: String = Defaults.PREF_TRANSLATE_API_KEY
     private var lastSourceText: String = ""
     private var lastTranslation: String? = null
+    private var lastDetectedLang: String? = null
+    private lateinit var sourceAdapter: ArrayAdapter<String>
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val translateRunnable = Runnable { translateCurrent() }
@@ -61,16 +67,33 @@ class TranslateBar(
         defaultTextColors = textResult.textColors
 
         val displayNames = TranslateLanguages.LANGUAGES.map { it.second }
-        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, displayNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerSource.adapter = adapter
-        spinnerTarget.adapter = adapter
+        // Custom collapsed views so it is obvious which spinner is the source ("Origen: …") and
+        // which is the target ("Destino: …"); in auto mode the source also shows what was detected.
+        val targetAdapter = object : ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, displayNames) {
+            override fun getView(position: Int, convertView: android.view.View?, parent: ViewGroup): android.view.View {
+                val view = super.getView(position, convertView, parent) as TextView
+                view.ellipsize = android.text.TextUtils.TruncateAt.END
+                view.text = context.getString(R.string.translate_target_label, TranslateLanguages.LANGUAGES.getOrNull(position)?.second ?: "")
+                return view
+            }
+        }.also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        sourceAdapter = object : ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, displayNames) {
+            override fun getView(position: Int, convertView: android.view.View?, parent: ViewGroup): android.view.View {
+                val view = super.getView(position, convertView, parent) as TextView
+                view.ellipsize = android.text.TextUtils.TruncateAt.END
+                view.text = sourceCollapsedLabel(position)
+                return view
+            }
+        }.also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        spinnerSource.adapter = sourceAdapter
+        spinnerTarget.adapter = targetAdapter
 
         spinnerSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: AdapterView<*>, v: android.view.View?, pos: Int, id: Long) {
                 if (suppressSpinnerEvents) return
                 currentSource = TranslateLanguages.LANGUAGES[pos].first
                 prefs.edit().putString(Settings.PREF_TRANSLATE_SOURCE, currentSource).apply()
+                lastDetectedLang = null
                 translateCurrent()
             }
             override fun onNothingSelected(p: AdapterView<*>) {}
@@ -90,6 +113,16 @@ class TranslateBar(
         textResult.setOnClickListener { insertTranslation() }
         findViewById<ImageButton>(R.id.btn_close).setOnClickListener { TranslateController.deactivate() }
         findViewById<ImageButton>(R.id.btn_settings).setOnClickListener { showEndpointDialog() }
+
+        // Tint the icons with the theme color used by the native toolbar keys, so they are clearly
+        // visible on any keyboard theme (same mechanism as SuggestionStripView.setupKey).
+        val colors = Settings.getValues().mColors
+        for (id in intArrayOf(R.id.btn_swap, R.id.btn_insert, R.id.btn_close, R.id.btn_settings)) {
+            val button = findViewById<ImageButton>(id)
+            button.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+            button.adjustViewBounds = false
+            colors.setColor(button, ColorType.TOOL_BAR_KEY)
+        }
 
         refreshFromPrefs()
         showPlaceholder()
@@ -113,6 +146,10 @@ class TranslateBar(
         mainHandler.removeCallbacks(translateRunnable)
         if (text.isBlank()) {
             lastTranslation = null
+            if (lastDetectedLang != null) {
+                lastDetectedLang = null
+                refreshSourceLabel()
+            }
             showPlaceholder()
             return
         }
@@ -123,10 +160,27 @@ class TranslateBar(
         currentSource = prefs.getString(Settings.PREF_TRANSLATE_SOURCE, Defaults.PREF_TRANSLATE_SOURCE) ?: Defaults.PREF_TRANSLATE_SOURCE
         currentTarget = prefs.getString(Settings.PREF_TRANSLATE_TARGET, Defaults.PREF_TRANSLATE_TARGET) ?: Defaults.PREF_TRANSLATE_TARGET
         currentEndpoint = prefs.getString(Settings.PREF_TRANSLATE_ENDPOINT, Defaults.PREF_TRANSLATE_ENDPOINT) ?: Defaults.PREF_TRANSLATE_ENDPOINT
+        currentApiKey = prefs.getString(Settings.PREF_TRANSLATE_API_KEY, Defaults.PREF_TRANSLATE_API_KEY) ?: Defaults.PREF_TRANSLATE_API_KEY
         suppressSpinnerEvents = true
         spinnerSource.setSelection(TranslateLanguages.indexOfCode(currentSource))
         spinnerTarget.setSelection(TranslateLanguages.indexOfCode(currentTarget))
         suppressSpinnerEvents = false
+    }
+
+    /** Collapsed label for the source spinner, e.g. "Origen: Español" or "Origen: Detectar (inglés)". */
+    private fun sourceCollapsedLabel(position: Int): String {
+        val name = TranslateLanguages.LANGUAGES.getOrNull(position)?.second ?: ""
+        return if (TranslateLanguages.LANGUAGES.getOrNull(position)?.first == "auto") {
+            val detected = lastDetectedLang?.let { TranslateLanguages.displayName(it) }
+            if (detected != null) context.getString(R.string.translate_origin_label, "$name ($detected)")
+            else context.getString(R.string.translate_origin_label, name)
+        } else {
+            context.getString(R.string.translate_origin_label, name)
+        }
+    }
+
+    private fun refreshSourceLabel() {
+        sourceAdapter.notifyDataSetChanged()
     }
 
     private fun translateCurrent() {
@@ -136,13 +190,17 @@ class TranslateBar(
             showPlaceholder()
             return
         }
-        TranslateClient.translate(text, currentSource, currentTarget, currentEndpoint) { result, error ->
+        TranslateClient.translate(text, currentSource, currentTarget, currentEndpoint, currentApiKey) { result, detected, error ->
             if (error != null) {
                 lastTranslation = null
                 textResult.text = context.getString(R.string.translate_error, error)
                 textResult.setTextColor(Color.RED)
             } else {
                 lastTranslation = result
+                if (currentSource == "auto" && detected != null && detected != lastDetectedLang) {
+                    lastDetectedLang = detected
+                    refreshSourceLabel()
+                }
                 textResult.text = result
                 textResult.setTextColor(defaultTextColors)
             }
@@ -150,6 +208,7 @@ class TranslateBar(
     }
 
     private fun swapLanguages() {
+        lastDetectedLang = null
         if (currentSource == "auto") {
             // can't have "auto" as target, fall back to English
             currentSource = currentTarget
@@ -177,8 +236,15 @@ class TranslateBar(
         conn.beginBatchEdit()
         try {
             conn.finishComposingText()
-            if (lastSourceText.isNotEmpty() && before.endsWith(lastSourceText)) {
-                conn.deleteSurroundingText(lastSourceText.length, 0)
+            val src = lastSourceText.trimEnd()
+            if (src.isNotEmpty()) {
+                // Replace the source text if it is still right before the cursor (modulo trailing
+                // whitespace the editor may have added); otherwise just insert at the cursor.
+                val trailingWs = before.length - before.trimEnd().length
+                val start = before.length - trailingWs - src.length
+                if (start >= 0 && before.substring(start, before.length - trailingWs) == src) {
+                    conn.deleteSurroundingText(src.length + trailingWs, 0)
+                }
             }
             conn.commitText(translated, 1)
         } finally {
@@ -192,22 +258,46 @@ class TranslateBar(
     }
 
     private fun showEndpointDialog() {
+        // Simple container: endpoint field + optional API key field.
+        val container = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 8, 24, 0)
+        }
         val edit = EditText(context).apply {
             inputType = InputType.TYPE_TEXT_VARIATION_URI
+            hint = context.getString(R.string.translate_endpoint_hint)
             setText(currentEndpoint)
-            setSelection(currentEndpoint.length)
         }
+        container.addView(TextView(context).apply {
+            text = context.getString(R.string.translate_endpoint_dialog_msg)
+            textSize = 13f
+        })
+        container.addView(edit)
+        val editApiKey = EditText(context).apply {
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = context.getString(R.string.translate_api_key_hint)
+            setText(currentApiKey)
+        }
+        container.addView(TextView(context).apply {
+            text = context.getString(R.string.translate_api_key_dialog_msg)
+            textSize = 13f
+            setPadding(0, 24, 0, 0)
+        })
+        container.addView(editApiKey)
+
         val dialog = AlertDialog.Builder(context)
             .setTitle(R.string.translate_endpoint_dialog_title)
-            .setMessage(R.string.translate_endpoint_dialog_msg)
-            .setView(edit)
+            .setView(container)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val value = edit.text.toString().trim()
+                val key = editApiKey.text.toString().trim()
+                currentApiKey = key
+                prefs.edit().putString(Settings.PREF_TRANSLATE_API_KEY, key).apply()
                 if (value.isNotEmpty()) {
                     currentEndpoint = value
                     prefs.edit().putString(Settings.PREF_TRANSLATE_ENDPOINT, value).apply()
-                    translateCurrent()
                 }
+                translateCurrent()
             }
             .setNegativeButton(android.R.string.cancel, null)
             .create()

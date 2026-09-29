@@ -201,6 +201,7 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
     // Integrated translator (LibreTranslate-compatible API)
     public static final String PREF_TRANSLATE_ENABLED = "translate_enabled";
     public static final String PREF_TRANSLATE_ENDPOINT = "translate_endpoint";
+    public static final String PREF_TRANSLATE_API_KEY = "translate_api_key";
     public static final String PREF_TRANSLATE_SOURCE = "translate_source";
     public static final String PREF_TRANSLATE_TARGET = "translate_target";
 

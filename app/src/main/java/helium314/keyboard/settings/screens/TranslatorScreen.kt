@@ -44,6 +44,9 @@ fun createTranslatorSettings(context: Context) = listOf(
     Setting(context, Settings.PREF_TRANSLATE_ENDPOINT, R.string.translate_endpoint, R.string.translate_endpoint_summary) {
         TextInputPreference(it, Defaults.PREF_TRANSLATE_ENDPOINT, info = context.getString(R.string.translate_endpoint_dialog_msg))
     },
+    Setting(context, Settings.PREF_TRANSLATE_API_KEY, R.string.translate_api_key, R.string.translate_api_key_summary) {
+        TextInputPreference(it, Defaults.PREF_TRANSLATE_API_KEY, info = context.getString(R.string.translate_api_key_dialog_msg))
+    },
     Setting(context, Settings.PREF_TRANSLATE_SOURCE, R.string.translate_source) {
         ListPreference(it, TranslateLanguages.LANGUAGES.map { l -> l.second to l.first }, Defaults.PREF_TRANSLATE_SOURCE)
     },

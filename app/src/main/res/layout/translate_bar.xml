@@ -19,7 +19,7 @@
         android:id="@+id/spinner_source"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:minHeight="0dp" />
 
     <ImageButton
@@ -27,7 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_swap"
         android:contentDescription="@string/translate_swap" />
 
@@ -35,14 +34,14 @@
         android:id="@+id/spinner_target"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:minHeight="0dp" />
 
     <TextView
         android:id="@+id/text_result"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="4"
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingStart="10dp"
@@ -57,7 +56,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_check"
         android:contentDescription="@string/translate_insert" />
 
@@ -66,7 +64,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_settings_gear"
         android:contentDescription="@string/translate_settings" />
 
@@ -75,7 +72,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_close"
         android:contentDescription="@string/translate_close" />
 </LinearLayout>

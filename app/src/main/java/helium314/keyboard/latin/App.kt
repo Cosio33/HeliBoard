@@ -38,6 +38,11 @@ class App : Application() {
             )
         }
 
+        // Migrate the old default translator endpoint (libretranslate.de now requires an API key)
+        // to the new working default, unless the user explicitly customized it to something else.
+        if (prefs().getString(Settings.PREF_TRANSLATE_ENDPOINT, null) == "https://libretranslate.de")
+            prefs().edit().putString(Settings.PREF_TRANSLATE_ENDPOINT, Defaults.PREF_TRANSLATE_ENDPOINT).apply()
+
         RichInputMethodManager.init(this)
         checkVersionUpgrade(this)
         if (BuildConfig.DEBUG) // do this on every debug apk start because we may work on adding a new toolbar key

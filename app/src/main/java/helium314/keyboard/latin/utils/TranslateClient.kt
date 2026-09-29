@@ -24,6 +24,7 @@ object TranslateClient {
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
     private val requestId = AtomicLong(0)
+    @Volatile
     private var lastDeliveredId = 0L
 
     /**
@@ -32,17 +33,24 @@ object TranslateClient {
      * @param source    source language code, e.g. "en" or "auto"
      * @param target    target language code, e.g. "es"
      * @param endpoint  base URL of the translation server, e.g. "https://libretranslate.de"
-     * @param onResult  called on the main thread with `(translatedText, errorMessage)`
+     * @param apiKey    optional API key; sent as `api_key` in the JSON body only when non-blank
+     * @param onResult  called on the main thread with `(translatedText, detectedLangCode, errorMessage)`;
+     *                  `detectedLangCode` is the ISO code of the detected source language when `source`
+     *                  is "auto" (e.g. "en"), or null otherwise / on error
      */
     fun translate(
         text: String,
         source: String,
         target: String,
         endpoint: String,
-        onResult: (result: String?, error: String?) -> Unit
+        apiKey: String = "",
+        onResult: (result: String?, detectedLang: String?, error: String?) -> Unit
     ) {
         if (text.isBlank()) {
-            mainHandler.post { onResult(null, null) }
+            // Invalidate any request still in flight so its stale result can't repaint the UI
+            // after the user cleared the text.
+            synchronized(this) { lastDeliveredId = requestId.get() + 1 }
+            mainHandler.post { onResult(null, null, null) }
             return
         }
         val myId = requestId.incrementAndGet()
@@ -64,6 +72,7 @@ object TranslateClient {
                         put("source", source)
                         put("target", target)
                         put("format", "text")
+                        if (apiKey.isNotBlank()) put("api_key", apiKey.trim())
                     }.toString()
 
                     conn.outputStream.use { os -> os.write(body.toByteArray(Charsets.UTF_8)) }
@@ -73,25 +82,33 @@ object TranslateClient {
                     val response = raw?.bufferedReader()?.use { it.readText() }.orEmpty()
 
                     if (code in 200..299) {
-                        val translated = JSONObject(response).optString("translatedText", "")
-                        if (myId >= lastDeliveredId) {
-                            lastDeliveredId = myId
-                            mainHandler.post { onResult(translated, null) }
+                        val json = JSONObject(response)
+                        val translated = json.optString("translatedText", "")
+                        val detected = json.optJSONObject("detectedLanguage")?.optString("language")?.takeIf { it.isNotBlank() }
+                        synchronized(this@TranslateClient) {
+                            if (myId >= lastDeliveredId) {
+                                lastDeliveredId = myId
+                                mainHandler.post { onResult(translated, detected, null) }
+                            }
                         }
                     } else {
-                        if (myId >= lastDeliveredId) {
-                            lastDeliveredId = myId
-                            val msg = runCatching { JSONObject(response).optString("error", "HTTP $code") }.getOrDefault("HTTP $code")
-                            mainHandler.post { onResult(null, msg) }
+                        synchronized(this@TranslateClient) {
+                            if (myId >= lastDeliveredId) {
+                                lastDeliveredId = myId
+                                val msg = runCatching { JSONObject(response).optString("error", "HTTP $code") }.getOrDefault("HTTP $code")
+                                mainHandler.post { onResult(null, null, msg) }
+                            }
                         }
                     }
                 } finally {
                     conn.disconnect()
                 }
             } catch (e: Exception) {
-                if (myId >= lastDeliveredId) {
-                    lastDeliveredId = myId
-                    mainHandler.post { onResult(null, e.message ?: e.javaClass.simpleName) }
+                synchronized(this@TranslateClient) {
+                    if (myId >= lastDeliveredId) {
+                        lastDeliveredId = myId
+                        mainHandler.post { onResult(null, null, e.message ?: e.javaClass.simpleName) }
+                    }
                 }
             }
         }

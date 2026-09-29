@@ -194,7 +194,8 @@ object Defaults {
     const val PREF_SPELLCHECK_SUGGEST = true
     const val PREF_SHOW_ONLY_TOOLBAR_WITH_HARDWARE_KEYBOARD = false
     const val PREF_TRANSLATE_ENABLED = true
-    const val PREF_TRANSLATE_ENDPOINT = "https://libretranslate.de"
+    const val PREF_TRANSLATE_ENDPOINT = "https://translate.disroot.org"
+    const val PREF_TRANSLATE_API_KEY = ""
     const val PREF_TRANSLATE_SOURCE = "auto"
     const val PREF_TRANSLATE_TARGET = "es"
 }
