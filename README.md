@@ -105,6 +105,18 @@ En <i>Ajustes → Traductor</i> (o el botón ⚙️ de la barra):
 
 For [FAQ](https://github.com/HeliBorg/HeliBoard/wiki/FAQ), [hidden features](https://github.com/HeliBorg/HeliBoard/wiki/9.-Hidden-features) and more information about the app and features, please visit the [wiki](https://github.com/HeliBorg/HeliBoard/wiki)
 
+# Descargar APK (fork con traductor)
+
+APK precompilado de este fork (build release, minificado, con el traductor integrado):
+
+**Descarga directa:** https://github.com/Cosio33/HeliBoard/releases/download/v4.1-translator/HeliBoard_4.1-translator-release.apk
+
+**Página de releases:** https://github.com/Cosio33/HeliBoard/releases
+
+> El APK **no se guarda dentro del repositorio** — se publica como asset del release `v4.1-translator`
+> (los binarios no se versionan en git). Si el repo no tiene GitHub Actions activo, regenera el APK
+> con `./gradlew :app:assembleRelease` y súbelo a un nuevo release.
+
 # Contributing ❤
 
 ## Reporting Issues
